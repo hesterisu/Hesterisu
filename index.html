@@ -202,9 +202,60 @@
 
   .status-badge{ font-family:'JetBrains Mono', monospace; font-size:0.78rem; font-weight:700; display:inline-flex; align-items:center; gap:6px; }
   .status-badge .dot{ width:6px; height:6px; border-radius:50%; }
+
+  /* ---------- Marquee ticker ---------- */
+  .marquee-wrap{
+    border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+    background:rgba(255,255,255,0.015);
+    overflow:hidden; white-space:nowrap; padding:1.1rem 0;
+  }
+  .marquee-track{
+    display:inline-flex; gap:0.9rem; align-items:center;
+    animation:marquee 26s linear infinite;
+    font-family:'JetBrains Mono', monospace; font-size:0.95rem; letter-spacing:0.04em;
+    color:var(--ink-dim);
+  }
+  .marquee-track span{ padding:0 0.2rem; }
+  .marquee-track .dotsep{ color:var(--amber); }
+  .marquee-wrap:hover .marquee-track{ animation-play-state:paused; }
+  @keyframes marquee{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce){ .marquee-track{ animation:none; } }
+
+  /* ---------- Scroll progress bar ---------- */
+  #scrollProgress{
+    position:fixed; top:0; left:0; height:2px; width:0%; z-index:70;
+    background:linear-gradient(90deg, var(--amber), var(--magenta), var(--cyan));
+    box-shadow:0 0 10px rgba(66,232,208,0.6);
+    transition:width 0.1s linear;
+  }
+
+  /* ---------- Custom cursor glow ---------- */
+  #cursorGlow{
+    position:fixed; top:0; left:0; width:26px; height:26px; border-radius:50%;
+    pointer-events:none; z-index:60; mix-blend-mode:screen;
+    background:radial-gradient(circle, rgba(66,232,208,0.9), rgba(66,232,208,0) 70%);
+    transform:translate(-50%,-50%); opacity:0; transition:opacity 0.2s ease;
+  }
+  #cursorGlow.active{ opacity:1; }
+  #cursorRing{
+    position:fixed; top:0; left:0; width:34px; height:34px; border-radius:50%;
+    border:1px solid rgba(237,245,239,0.35);
+    pointer-events:none; z-index:60; transform:translate(-50%,-50%);
+    opacity:0; transition:opacity 0.2s ease, width 0.2s ease, height 0.2s ease, border-color 0.2s ease;
+  }
+  #cursorRing.active{ opacity:1; }
+  #cursorRing.hovering{ width:52px; height:52px; border-color:var(--amber); }
+  @media (pointer:coarse){ #cursorGlow, #cursorRing{ display:none; } }
+
+  /* Magnetic buttons get a smoother easing when JS nudges them */
+  .magnetic{ transition:transform 0.18s ease-out, box-shadow 0.2s ease, border-color 0.2s ease; }
 </style>
 </head>
 <body class="no-js-flat">
+
+<div id="scrollProgress"></div>
+<div id="cursorGlow" aria-hidden="true"></div>
+<div id="cursorRing" aria-hidden="true"></div>
 
 <div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
 
@@ -279,8 +330,8 @@
         </div>
 
         <div class="flex flex-wrap gap-4 mb-14">
-          <a href="#proyek" class="btn-primary">LIHAT LEMBAR KERJA →</a>
-          <a href="#kontak" class="btn-outline">HUBUNGI SAYA</a>
+          <a href="#proyek" class="btn-primary magnetic">LIHAT LEMBAR KERJA →</a>
+          <a href="#kontak" class="btn-outline magnetic">HUBUNGI SAYA</a>
         </div>
 
         <div class="card p-5 inline-block">
@@ -362,6 +413,32 @@
   </section>
 
   <div class="max-w-6xl mx-auto px-6"><div class="divider-glow"></div></div>
+
+  <!-- Stat band -->
+  <section class="py-16 px-6">
+    <div class="max-w-6xl mx-auto grid grid-cols-3 gap-6 text-center">
+      <div class="reveal">
+        <div class="display text-4xl md:text-5xl mb-1" style="color:var(--amber)"><span class="counter" data-target="7">0</span>+</div>
+        <div class="tag" style="color:var(--ink-dim)">TAHUN PENGALAMAN</div>
+      </div>
+      <div class="reveal" style="transition-delay:0.08s">
+        <div class="display text-4xl md:text-5xl mb-1" style="color:var(--magenta)"><span class="counter" data-target="24">0</span>+</div>
+        <div class="tag" style="color:var(--ink-dim)">PROYEK SELESAI</div>
+      </div>
+      <div class="reveal" style="transition-delay:0.16s">
+        <div class="display text-4xl md:text-5xl mb-1" style="color:var(--cyan)"><span class="counter" data-target="3">0</span></div>
+        <div class="tag" style="color:var(--ink-dim)">DISIPLIN, SATU PRESISI</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Infinite marquee ticker -->
+  <div class="marquee-wrap reveal">
+    <div class="marquee-track">
+      <span>REACT</span><span class="dotsep">·</span><span>NODE.JS</span><span class="dotsep">·</span><span>TYPESCRIPT</span><span class="dotsep">·</span><span>MONGODB</span><span class="dotsep">·</span><span>THREE.JS</span><span class="dotsep">·</span><span>DIAGNOSTIK MESIN</span><span class="dotsep">·</span><span>LIVERY & DESAIN</span><span class="dotsep">·</span><span>OTOMOTIF</span><span class="dotsep">·</span>
+      <span>REACT</span><span class="dotsep">·</span><span>NODE.JS</span><span class="dotsep">·</span><span>TYPESCRIPT</span><span class="dotsep">·</span><span>MONGODB</span><span class="dotsep">·</span><span>THREE.JS</span><span class="dotsep">·</span><span>DIAGNOSTIK MESIN</span><span class="dotsep">·</span><span>LIVERY & DESAIN</span><span class="dotsep">·</span><span>OTOMOTIF</span><span class="dotsep">·</span>
+    </div>
+  </div>
 
   <!-- Skills as diagnostic panels -->
   <section id="keahlian" class="py-24 px-6">
@@ -632,6 +709,82 @@
       });
     });
   }
+
+  // Scroll progress bar
+  (function(){
+    const bar = document.getElementById('scrollProgress');
+    if (!bar) return;
+    function update(){
+      const h = document.documentElement;
+      const scrolled = h.scrollTop / (h.scrollHeight - h.clientHeight) * 100;
+      bar.style.width = (scrolled || 0) + '%';
+    }
+    document.addEventListener('scroll', update, { passive:true });
+    update();
+  })();
+
+  // Custom cursor glow + ring, with a magnetic-hover state on interactive elements
+  if (!isCoarsePointer) {
+    const glow = document.getElementById('cursorGlow');
+    const ring = document.getElementById('cursorRing');
+    let gx = 0, gy = 0, rx = 0, ry = 0, mx = 0, my = 0;
+
+    window.addEventListener('mousemove', (e) => {
+      mx = e.clientX; my = e.clientY;
+      glow.classList.add('active'); ring.classList.add('active');
+    });
+    document.addEventListener('mouseleave', () => { glow.classList.remove('active'); ring.classList.remove('active'); });
+
+    document.querySelectorAll('a, button, .tilt-3d').forEach(el => {
+      el.addEventListener('mouseenter', () => ring.classList.add('hovering'));
+      el.addEventListener('mouseleave', () => ring.classList.remove('hovering'));
+    });
+
+    function cursorLoop(){
+      gx += (mx - gx) * 0.35; gy += (my - gy) * 0.35;
+      rx += (mx - rx) * 0.16; ry += (my - ry) * 0.16;
+      glow.style.left = gx + 'px'; glow.style.top = gy + 'px';
+      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      requestAnimationFrame(cursorLoop);
+    }
+    requestAnimationFrame(cursorLoop);
+  }
+
+  // Magnetic buttons — nudge toward the cursor within their bounds
+  if (!isCoarsePointer && !reduceMotion) {
+    document.querySelectorAll('.magnetic').forEach(btn => {
+      btn.addEventListener('mousemove', (e) => {
+        const rect = btn.getBoundingClientRect();
+        const px = (e.clientX - rect.left - rect.width / 2) * 0.28;
+        const py = (e.clientY - rect.top - rect.height / 2) * 0.35;
+        btn.style.transform = `translate(${px.toFixed(1)}px, ${py.toFixed(1)}px)`;
+      });
+      btn.addEventListener('mouseleave', () => { btn.style.transform = 'translate(0,0)'; });
+    });
+  }
+
+  // Count-up stats, triggered once each enters view
+  (function(){
+    const counters = document.querySelectorAll('.counter');
+    if (!counters.length) return;
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target;
+        const target = parseInt(el.dataset.target, 10);
+        if (reduceMotion) { el.textContent = target; io.unobserve(el); return; }
+        let cur = 0;
+        const step = Math.max(1, Math.round(target / 40));
+        const int = setInterval(() => {
+          cur = Math.min(target, cur + step);
+          el.textContent = cur;
+          if (cur >= target) clearInterval(int);
+        }, 30);
+        io.unobserve(el);
+      });
+    }, { threshold:0.5 });
+    counters.forEach(c => io.observe(c));
+  })();
 
   // Cycling role readout — typewriter through the three identities
   (function(){
