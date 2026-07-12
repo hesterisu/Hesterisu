@@ -190,6 +190,29 @@
   @media (max-width: 768px){
     .fuel-gauge{ display:none; }
   }
+
+  /* Whole-page ambient response when the engine is running */
+  .engine-glow{
+    position:fixed; inset:0; z-index:2; pointer-events:none; opacity:0;
+    transition:opacity 0.7s ease;
+    background: radial-gradient(ellipse 70% 40% at 50% 0%, rgba(255,107,26,0.12), transparent 65%);
+  }
+  .engine-running .engine-glow{ opacity:1; animation: glow-pulse 2.4s ease-in-out infinite; }
+  @keyframes glow-pulse{ 0%,100%{ opacity:0.55; } 50%{ opacity:1; } }
+
+  .engine-running .blueprint-bg{ animation: engine-vibrate 0.16s steps(4) infinite; }
+  @keyframes engine-vibrate{
+    0%{ transform:translate(0,0); }
+    25%{ transform:translate(0.6px,-0.5px); }
+    50%{ transform:translate(-0.5px,0.6px); }
+    75%{ transform:translate(0.6px,0.5px); }
+    100%{ transform:translate(0,0); }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .engine-running .blueprint-bg{ animation:none; }
+    .engine-running .engine-glow{ animation:none; opacity:0.5; }
+  }
 </style>
 </head>
 <body>
@@ -204,6 +227,7 @@
 </div>
 
 <div class="blueprint-bg"></div>
+<div class="engine-glow" aria-hidden="true"></div>
 
 <div class="fuel-gauge" aria-hidden="true">
   <span class="fuel-label">F</span>
@@ -547,6 +571,7 @@
     let running = false;
     let soundOn = true;
     let audioCtx = null;
+    const originalTitle = document.title;
 
     if (soundToggle) {
       soundToggle.addEventListener('click', () => {
@@ -638,6 +663,8 @@
         btn.textContent = 'MATIKAN MESIN';
         sparkBurst();
         playEngine(true);
+        document.body.classList.add('engine-running');
+        document.title = 'VRRR — mesin menyala · Hanif Haikal';
         if (reduce) {
           needle.style.transition = 'none';
           needle.style.transform = 'rotate(15deg)';
@@ -653,6 +680,8 @@
       } else {
         btn.textContent = 'NYALAKAN MESIN';
         playEngine(false);
+        document.body.classList.remove('engine-running');
+        document.title = originalTitle;
         needle.style.transition = 'transform 1.3s cubic-bezier(.32,1.6,.44,1)';
         needle.style.transform = 'rotate(-80deg)';
         animateReadout(0, 700);
