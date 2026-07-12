@@ -155,8 +155,41 @@
 
   /* Ignition gauge */
   #needle{ transform-origin:100px 100px; transform:rotate(-80deg); transition:transform 1.3s cubic-bezier(.32,1.6,.44,1); }
-  #ignition-btn{ background:none; cursor:pointer; font-size:0.85rem; width:100%; transition:transform 0.2s ease, background 0.2s ease, color 0.2s ease; }
+  #ignition-btn{ background:none; cursor:pointer; font-size:0.85rem; flex:1; transition:transform 0.2s ease, background 0.2s ease, color 0.2s ease; }
   #ignition-btn:hover{ background:var(--orange); color:#14171a; }
+  #sound-toggle{ background:none; cursor:pointer; color:var(--muted); border:1px solid rgba(236,231,218,0.25); border-radius:2px; transition:color 0.15s ease, border-color 0.15s ease; }
+  #sound-toggle:hover{ color:var(--paper); border-color:var(--paper); }
+  .ignition-row{ position:relative; display:flex; align-items:stretch; gap:10px; }
+
+  /* Spark particles fired on ignition */
+  .spark{
+    position:absolute; width:4px; height:4px; border-radius:50%;
+    background:var(--orange); left:50%; top:50%;
+    pointer-events:none; z-index:5;
+    animation: spark-fly 0.6s ease-out forwards;
+  }
+  @keyframes spark-fly{
+    from{ opacity:1; transform:translate(-50%,-50%) translate(0,0) scale(1); }
+    to{ opacity:0; transform:translate(-50%,-50%) translate(var(--dx), var(--dy)) scale(0.2); }
+  }
+
+  /* Scroll fuel gauge */
+  .fuel-gauge{
+    position:fixed; right:18px; bottom:24px; z-index:40;
+    display:flex; flex-direction:column; align-items:center; gap:4px;
+    background:var(--panel); border:1px solid var(--panel-line); padding:10px 8px; border-radius:4px;
+  }
+  .fuel-label{ font-family:'JetBrains Mono', monospace; font-size:0.6rem; color:var(--muted); }
+  .fuel-tube{
+    width:10px; height:90px; border:1px solid rgba(236,231,218,0.25); border-radius:3px;
+    overflow:hidden; display:flex; align-items:flex-end; background:rgba(0,0,0,0.35);
+  }
+  .fuel-fill{ width:100%; height:0%; background:linear-gradient(180deg, var(--orange), #d9500d); }
+  .fuel-pct{ font-family:'JetBrains Mono', monospace; font-size:0.6rem; color:var(--paper); margin-top:2px; }
+
+  @media (max-width: 768px){
+    .fuel-gauge{ display:none; }
+  }
 </style>
 </head>
 <body>
@@ -171,6 +204,15 @@
 </div>
 
 <div class="blueprint-bg"></div>
+
+<div class="fuel-gauge" aria-hidden="true">
+  <span class="fuel-label">F</span>
+  <div class="fuel-tube">
+    <div class="fuel-fill" id="fuel-fill"></div>
+  </div>
+  <span class="fuel-label">E</span>
+  <div class="fuel-pct" id="fuel-pct">0%</div>
+</div>
 
 <div class="content">
 
@@ -243,7 +285,10 @@
               <span class="mono text-xs" id="rpm-readout" style="color:var(--paper)">0.0</span>
             </div>
 
-            <button id="ignition-btn" type="button" class="stamp mb-8" aria-pressed="false">NYALAKAN MESIN</button>
+            <div class="ignition-row mb-8" id="ignition-row">
+              <button id="ignition-btn" type="button" class="stamp" aria-pressed="false">NYALAKAN MESIN</button>
+              <button id="sound-toggle" type="button" class="mono text-xs px-3" aria-pressed="true" title="Suara mesin">🔊</button>
+            </div>
 
             <div class="space-y-4 dash-line pt-6">
               <div class="flex justify-between text-sm">
@@ -489,15 +534,89 @@
     });
   })();
 
-  // Ignition gauge
+  // Ignition gauge, engine sound, and spark bursts
   (function(){
     const btn = document.getElementById('ignition-btn');
     const needle = document.getElementById('needle');
     const readout = document.getElementById('rpm-readout');
+    const row = document.getElementById('ignition-row');
+    const soundToggle = document.getElementById('sound-toggle');
     if (!btn || !needle || !readout) return;
 
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let running = false;
+    let soundOn = true;
+    let audioCtx = null;
+
+    if (soundToggle) {
+      soundToggle.addEventListener('click', () => {
+        soundOn = !soundOn;
+        soundToggle.textContent = soundOn ? '🔊' : '🔇';
+        soundToggle.setAttribute('aria-pressed', String(soundOn));
+      });
+    }
+
+    function playEngine(startingUp){
+      if (!soundOn) return;
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      audioCtx = ctx;
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc2.type = 'square';
+      osc2.detune.value = 6;
+      const gain2 = ctx.createGain();
+      gain2.gain.value = 0.35;
+      osc.connect(gain);
+      osc2.connect(gain2);
+      gain2.connect(gain);
+      gain.connect(ctx.destination);
+
+      if (startingUp) {
+        osc.frequency.setValueAtTime(55, now);
+        osc.frequency.exponentialRampToValueAtTime(210, now + 0.35);
+        osc.frequency.exponentialRampToValueAtTime(95, now + 1.15);
+        osc2.frequency.setValueAtTime(55, now);
+        osc2.frequency.exponentialRampToValueAtTime(210, now + 0.35);
+        osc2.frequency.exponentialRampToValueAtTime(95, now + 1.15);
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(0.16, now + 0.12);
+        gain.gain.exponentialRampToValueAtTime(0.07, now + 0.6);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.35);
+        osc.start(now); osc2.start(now);
+        osc.stop(now + 1.4); osc2.stop(now + 1.4);
+      } else {
+        osc.frequency.setValueAtTime(130, now);
+        osc.frequency.exponentialRampToValueAtTime(38, now + 0.5);
+        osc2.frequency.setValueAtTime(130, now);
+        osc2.frequency.exponentialRampToValueAtTime(38, now + 0.5);
+        gain.gain.setValueAtTime(0.14, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.55);
+        osc.start(now); osc2.start(now);
+        osc.stop(now + 0.6); osc2.stop(now + 0.6);
+      }
+      osc.onended = () => { try { ctx.close(); } catch (e) {} };
+    }
+
+    function sparkBurst(){
+      if (!row || reduce) return;
+      const count = 9;
+      for (let i = 0; i < count; i++){
+        const s = document.createElement('span');
+        s.className = 'spark';
+        const angle = Math.random() * Math.PI * 2;
+        const dist = 26 + Math.random() * 30;
+        s.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
+        s.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
+        s.style.animationDelay = (Math.random() * 0.08) + 's';
+        row.appendChild(s);
+        setTimeout(() => s.remove(), 700);
+      }
+    }
 
     function animateReadout(target, duration){
       const start = parseFloat(readout.textContent) || 0;
@@ -517,6 +636,8 @@
 
       if (running) {
         btn.textContent = 'MATIKAN MESIN';
+        sparkBurst();
+        playEngine(true);
         if (reduce) {
           needle.style.transition = 'none';
           needle.style.transform = 'rotate(15deg)';
@@ -531,11 +652,38 @@
         }
       } else {
         btn.textContent = 'NYALAKAN MESIN';
+        playEngine(false);
         needle.style.transition = 'transform 1.3s cubic-bezier(.32,1.6,.44,1)';
         needle.style.transform = 'rotate(-80deg)';
         animateReadout(0, 700);
       }
     });
+  })();
+
+  // Scroll fuel gauge
+  (function(){
+    const fill = document.getElementById('fuel-fill');
+    const pct = document.getElementById('fuel-pct');
+    if (!fill || !pct) return;
+    let ticking = false;
+
+    function update(){
+      const scrollTop = window.scrollY;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const ratio = max > 0 ? Math.min(Math.max(scrollTop / max, 0), 1) : 0;
+      fill.style.height = (ratio * 100).toFixed(0) + '%';
+      pct.textContent = Math.round(ratio * 100) + '%';
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(update);
+        ticking = true;
+      }
+    }, { passive: true });
+
+    update();
   })();
 </script>
 
