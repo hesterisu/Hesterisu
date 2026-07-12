@@ -6,157 +6,207 @@
 <title>Hanif Haikal — Montir, Desainer, Developer</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Bitter:wght@600;800;900&family=Libre+Franklin:wght@400;500;600;700&family=Courier+Prime:wght@400;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
   :root{
-    --paper:#ece1c8;
-    --paper-2:#e2d5b3;
-    --paper-line: rgba(33,26,19,0.16);
-    --ink:#211a13;
-    --rust:#b8451f;    /* montir */
-    --ochre:#b5822b;   /* desainer */
-    --teal:#2b6b5e;    /* developer */
-    --pencil:#6e6252;
+    --bg:#0a0d0c;
+    --bg-soft:#0f1512;
+    --surface:#131a17;
+    --surface-2:#182019;
+    --line: rgba(231,242,236,0.09);
+    --line-strong: rgba(231,242,236,0.18);
+    --ink:#edf5ef;
+    --ink-dim:#93a69c;
+    --amber:#ff9d3d;
+    --magenta:#ef5da8;
+    --cyan:#42e8d0;
   }
 
   *{ margin:0; padding:0; box-sizing:border-box; }
   html{ scroll-behavior:smooth; }
 
   body{
-    background:
-      radial-gradient(ellipse 700px 500px at 12% 8%, rgba(33,26,19,0.05), transparent 60%),
-      radial-gradient(ellipse 700px 500px at 88% 92%, rgba(33,26,19,0.05), transparent 60%),
-      var(--paper);
+    background:var(--bg);
     color:var(--ink);
-    font-family:'Libre Franklin', sans-serif;
+    font-family:'Manrope', sans-serif;
     font-size:16px;
     line-height:1.65;
+    overflow-x:hidden;
   }
 
-  /* Paper grain */
-  .grain{ position:fixed; inset:0; z-index:50; pointer-events:none; opacity:0.05; mix-blend-mode:multiply; }
+  .grain{ position:fixed; inset:0; z-index:50; pointer-events:none; opacity:0.045; mix-blend-mode:overlay; }
 
-  h1,h2,h3,.display{ font-family:'Bitter', serif; font-weight:800; letter-spacing:-0.01em; }
-  .mono{ font-family:'Courier Prime', monospace; }
-  .tag{ font-family:'Courier Prime', monospace; font-size:0.72rem; letter-spacing:0.05em; }
-  .kicker{ font-family:'Courier Prime', monospace; font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase; }
+  /* Ambient aurora — slow drifting glows so the page feels alive at rest */
+  .aurora{ position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+  .aurora span{ position:absolute; border-radius:50%; filter:blur(90px); opacity:0.16; }
+  .aurora span:nth-child(1){ width:620px; height:620px; left:-10%; top:-12%; background:var(--amber); animation:drift1 26s ease-in-out infinite; }
+  .aurora span:nth-child(2){ width:560px; height:560px; right:-12%; top:20%; background:var(--cyan); animation:drift2 32s ease-in-out infinite; }
+  .aurora span:nth-child(3){ width:480px; height:480px; left:30%; bottom:-18%; background:var(--magenta); animation:drift3 30s ease-in-out infinite; }
+  @keyframes drift1{ 0%,100%{ transform:translate(0,0); } 50%{ transform:translate(60px,40px); } }
+  @keyframes drift2{ 0%,100%{ transform:translate(0,0); } 50%{ transform:translate(-50px,60px); } }
+  @keyframes drift3{ 0%,100%{ transform:translate(0,0); } 50%{ transform:translate(40px,-50px); } }
+  @media (prefers-reduced-motion: reduce){ .aurora span{ animation:none !important; } }
 
-  ::selection{ background:var(--rust); color:var(--paper); }
+  h1,h2,h3,.display{ font-family:'Space Grotesk', sans-serif; font-weight:700; letter-spacing:-0.02em; }
+  .mono{ font-family:'JetBrains Mono', monospace; }
+  .tag{ font-family:'JetBrains Mono', monospace; font-size:0.72rem; letter-spacing:0.06em; }
+  .kicker{ font-family:'JetBrains Mono', monospace; font-size:0.72rem; letter-spacing:0.16em; text-transform:uppercase; }
+
+  ::selection{ background:var(--amber); color:#0a0d0c; }
 
   .content{ position:relative; z-index:1; }
 
-  /* Nav */
-  .nav-link{ font-family:'Courier Prime', monospace; font-size:0.82rem; letter-spacing:0.04em; color:var(--pencil); transition:color 0.15s ease; }
+  /* ---------- Status pill instead of stamp ---------- */
+  .status-pill{
+    display:inline-flex; align-items:center; gap:10px;
+    border:1px solid var(--line-strong); color:var(--ink-dim);
+    padding:8px 16px; border-radius:999px;
+    font-family:'JetBrains Mono', monospace; font-size:0.72rem; letter-spacing:0.08em;
+    background:rgba(255,255,255,0.02);
+  }
+  .status-dot{ width:7px; height:7px; border-radius:50%; background:var(--cyan); box-shadow:0 0 8px 2px var(--cyan); animation:pulse-dot 2.2s ease-in-out infinite; flex:none; }
+  @keyframes pulse-dot{ 0%,100%{ opacity:1; } 50%{ opacity:0.35; } }
+
+  /* ---------- Nav ---------- */
+  nav{ background:rgba(10,13,12,0.72); backdrop-filter:blur(14px); }
+  .nav-link{ font-family:'JetBrains Mono', monospace; font-size:0.8rem; letter-spacing:0.05em; color:var(--ink-dim); transition:color 0.15s ease; }
   .nav-link:hover{ color:var(--ink); }
   #mobile-menu{ max-height:0; overflow:hidden; transition:max-height 0.3s ease, padding 0.3s ease; padding:0 1.5rem; }
   #mobile-menu.open{ max-height:240px; padding:0 1.5rem 1.25rem; }
 
-  /* Print-misregistration stamp text */
+  /* Animated gradient sweep — the headline's signature treatment */
   .stamp-text{ position:relative; display:inline-block; }
-  .stamp-text .ghost{ position:absolute; top:0; left:0; opacity:0.55; mix-blend-mode:multiply; pointer-events:none; }
-  .stamp-text .ghost.rust{ color:var(--rust); transform:translate(4px,3px); }
-  .stamp-text .ghost.teal{ color:var(--teal); transform:translate(-4px,-3px); }
-
-  /* Rubber stamp badge */
-  .rubber-stamp{
-    display:inline-flex; align-items:center; gap:8px;
-    border:2.5px solid var(--rust); color:var(--rust);
-    padding:8px 16px; border-radius:2px;
-    transform:rotate(-4deg);
-    font-family:'Courier Prime', monospace; font-size:0.72rem; letter-spacing:0.1em;
-    opacity:0.9;
+  .gradient-text{
+    background:linear-gradient(100deg, var(--ink) 20%, var(--amber) 42%, var(--magenta) 58%, var(--cyan) 78%, var(--ink) 100%);
+    background-size:280% 100%;
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    animation:sweep 9s ease-in-out infinite;
   }
+  @keyframes sweep{ 0%{ background-position:0% 50%; } 50%{ background-position:100% 50%; } 100%{ background-position:0% 50%; } }
+  @media (prefers-reduced-motion: reduce){ .gradient-text{ animation:none; background-position:20% 50%; } }
 
-  /* Buttons */
   .btn-primary{
     display:inline-flex; align-items:center; gap:0.55rem;
-    background:var(--ink); color:var(--paper);
-    font-weight:700; padding:0.85rem 1.75rem; border-radius:2px;
-    transition:transform 0.15s ease, box-shadow 0.15s ease;
-    font-family:'Courier Prime', monospace; font-size:0.85rem; letter-spacing:0.03em;
+    background:var(--ink); color:var(--bg);
+    font-weight:700; padding:0.9rem 1.8rem; border-radius:6px;
+    transition:transform 0.15s ease, box-shadow 0.2s ease;
+    font-family:'JetBrains Mono', monospace; font-size:0.85rem; letter-spacing:0.03em;
   }
-  .btn-primary:hover{ transform:translateY(-2px) rotate(-0.5deg); box-shadow:3px 4px 0 var(--rust); }
+  .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 6px 24px -4px rgba(255,157,61,0.45); }
   .btn-outline{
     display:inline-flex; align-items:center; gap:0.55rem;
-    border:1.5px solid var(--ink); color:var(--ink);
-    padding:0.85rem 1.75rem; border-radius:2px;
-    transition:transform 0.15s ease, box-shadow 0.15s ease;
-    font-family:'Courier Prime', monospace; font-size:0.85rem; letter-spacing:0.03em;
+    border:1px solid var(--line-strong); color:var(--ink);
+    padding:0.9rem 1.8rem; border-radius:6px;
+    transition:transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    font-family:'JetBrains Mono', monospace; font-size:0.85rem; letter-spacing:0.03em;
   }
-  .btn-outline:hover{ transform:translateY(-2px) rotate(0.5deg); box-shadow:3px 4px 0 var(--ink); }
+  .btn-outline:hover{ transform:translateY(-2px); border-color:var(--cyan); box-shadow:0 6px 24px -6px rgba(66,232,208,0.35); }
   .btn-primary:focus-visible, .btn-outline:focus-visible, a:focus-visible, button:focus-visible{
-    outline:2px solid var(--rust); outline-offset:3px;
+    outline:2px solid var(--cyan); outline-offset:3px;
   }
 
   .reveal{ opacity:0; transform:translateY(20px); transition:opacity 0.6s ease, transform 0.6s ease; }
   .reveal.active{ opacity:1; transform:translateY(0); }
   @media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto; } .reveal{ opacity:1; transform:none; transition:none; } }
 
-  /* Index card (catalog entry) */
-  .card{
-    background:var(--paper-2);
-    border:1px solid var(--paper-line);
-    box-shadow:2px 3px 0 rgba(33,26,19,0.12);
-  }
-  .tape{
-    position:absolute; width:70px; height:22px; top:-11px; left:50%;
-    transform:translateX(-50%) rotate(-2deg);
-    background:rgba(236,225,200,0.7); border:1px solid rgba(33,26,19,0.12);
+  /* ---------- Depth / parallax stage ---------- */
+  .stage3d{ position:relative; perspective:1400px; perspective-origin:50% 40%; }
+  .layer{ will-change:transform; transition:transform 0.05s linear; }
+  .no-js-flat .layer{ transform:none !important; }
+
+  /* ---------- Signature: flashlight spotlight over hidden circuit grid ---------- */
+  .spotlight-field{
+    position:absolute; inset:0; pointer-events:none;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size:36px 36px;
+    -webkit-mask-image: radial-gradient(280px circle at var(--mx,50%) var(--my,30%), black 0%, black 25%, transparent 72%);
+            mask-image: radial-gradient(280px circle at var(--mx,50%) var(--my,30%), black 0%, black 25%, transparent 72%);
     opacity:0.9;
   }
-  .hole{ width:10px; height:10px; border-radius:50%; background:var(--paper); border:1px solid var(--paper-line); }
-
-  .tilt-settle{ transition:transform 0.3s ease, box-shadow 0.3s ease; }
-  .tilt-settle:hover{ transform:rotate(0deg) translateY(-3px); box-shadow:3px 5px 0 rgba(33,26,19,0.16); }
-  @media (max-width:767px){ [class*="tilt-"]{ transform:none !important; } }
-
-  /* Torn paper divider between sections */
-  .torn{ display:block; width:100%; height:26px; }
-
-  /* Perforation line (order-slip tear edge) */
-  .perf{
-    display:flex; justify-content:space-between; padding:0 6px;
+  .spotlight-glow{
+    position:absolute; inset:0; pointer-events:none;
+    background: radial-gradient(320px circle at var(--mx,50%) var(--my,30%), rgba(255,157,61,0.10), transparent 65%);
   }
-  .perf span{ width:7px; height:7px; border-radius:50%; background:var(--paper); border:1px solid var(--paper-line); margin-top:-4px; }
 
-  /* Pegboard hanging tool */
-  .peg-hook{ width:1px; height:26px; background:var(--pencil); margin:0 auto; }
-  .peg-circle{ width:10px; height:10px; border-radius:50%; border:2px solid var(--pencil); margin:0 auto -1px; background:var(--paper); }
+  .card{
+    background:linear-gradient(180deg, rgba(19,26,23,0.75), rgba(24,32,25,0.75));
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    border:1px solid var(--line);
+    border-radius:16px;
+    box-shadow:0 1px 0 rgba(255,255,255,0.03) inset, 0 30px 60px -40px rgba(0,0,0,0.6);
+    transition:border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+  }
+  .card-glow-amber:hover{ border-color:rgba(255,157,61,0.5); box-shadow:0 0 0 1px rgba(255,157,61,0.15), 0 20px 40px -20px rgba(255,157,61,0.35); }
+  .card-glow-magenta:hover{ border-color:rgba(239,93,168,0.5); box-shadow:0 0 0 1px rgba(239,93,168,0.15), 0 20px 40px -20px rgba(239,93,168,0.35); }
+  .card-glow-cyan:hover{ border-color:rgba(66,232,208,0.5); box-shadow:0 0 0 1px rgba(66,232,208,0.15), 0 20px 40px -20px rgba(66,232,208,0.35); }
 
-  /* Odometer (mechanical roller counter) */
-  .odometer{ display:flex; gap:3px; }
+  .tilt-3d{
+    transform-style:preserve-3d;
+    transform: perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateZ(var(--tz,0px));
+    transition:transform 0.12s ease-out, box-shadow 0.25s ease, border-color 0.25s ease;
+  }
+  .tilt-pop{ transform:translateZ(24px); transition:transform 0.12s ease-out; }
+  @media (max-width:767px){
+    .tilt-3d{ transform:none !important; }
+    .tilt-pop{ transform:none !important; }
+  }
+
+  .divider-glow{ height:1px; width:100%; background:linear-gradient(90deg, transparent, var(--line-strong) 20%, var(--line-strong) 80%, transparent); }
+
+  .peg-hook{ width:1px; height:22px; background:var(--line-strong); margin:0 auto; }
+  .peg-circle{ width:8px; height:8px; border-radius:50%; border:1.5px solid var(--line-strong); margin:0 auto -1px; background:var(--bg); }
+
+  /* LED-style odometer */
+  .odometer{ display:flex; gap:4px; }
   .digit-box{
-    width:40px; height:52px; overflow:hidden; position:relative;
-    background:var(--ink); border-radius:3px; box-shadow:inset 0 0 0 1px rgba(236,225,200,0.15);
+    width:38px; height:50px; overflow:hidden; position:relative;
+    background:#050706; border-radius:5px; border:1px solid var(--line);
+    box-shadow: inset 0 0 12px rgba(0,0,0,0.6);
   }
-  .digit-strip{
-    display:flex; flex-direction:column;
-    transition: transform 0.9s cubic-bezier(.2,.9,.15,1);
-  }
+  .digit-strip{ display:flex; flex-direction:column; transition: transform 0.9s cubic-bezier(.2,.9,.15,1); }
   .digit-strip span{
-    height:52px; display:flex; align-items:center; justify-content:center;
-    font-family:'Courier Prime', monospace; font-weight:700; font-size:1.7rem; color:var(--paper);
+    height:50px; display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono', monospace; font-weight:700; font-size:1.6rem; color:var(--cyan);
+    text-shadow:0 0 10px rgba(66,232,208,0.7);
   }
   #odo-btn{
-    cursor:pointer; background:none; border:1.5px solid var(--ink);
-    font-family:'Courier Prime', monospace; font-size:0.78rem; letter-spacing:0.06em;
-    padding:0.6rem 1rem; transition:transform 0.15s ease, box-shadow 0.15s ease;
+    cursor:pointer; background:none; border:1px solid var(--line-strong); color:var(--ink);
+    font-family:'JetBrains Mono', monospace; font-size:0.78rem; letter-spacing:0.06em;
+    padding:0.6rem 1rem; border-radius:6px; transition:transform 0.15s ease, border-color 0.2s ease;
   }
-  #odo-btn:hover{ transform:translateY(-2px); box-shadow:2px 3px 0 var(--rust); }
+  #odo-btn:hover{ transform:translateY(-2px); border-color:var(--amber); }
 
-  /* Ink stamp circular submit */
+  /* Glowing pulsing send button */
   .stamp-btn{
     display:inline-flex; align-items:center; justify-content:center;
-    width:132px; height:132px; border-radius:50%;
-    border:3px solid var(--rust); color:var(--rust);
-    font-family:'Courier Prime', monospace; font-size:0.8rem; letter-spacing:0.08em;
-    transform:rotate(-6deg); transition:transform 0.2s ease, background 0.2s ease, color 0.2s ease;
-    text-align:center; line-height:1.3;
+    width:130px; height:130px; border-radius:50%;
+    border:1px solid var(--line-strong); color:var(--ink);
+    font-family:'JetBrains Mono', monospace; font-size:0.8rem; letter-spacing:0.08em;
+    transition:transform 0.2s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    text-align:center; line-height:1.3; position:relative;
+    background:radial-gradient(circle at 50% 40%, rgba(66,232,208,0.08), transparent 70%);
   }
-  .stamp-btn:hover{ transform:rotate(-2deg) scale(1.04); background:var(--rust); color:var(--paper); }
+  .stamp-btn::before{
+    content:""; position:absolute; inset:-10px; border-radius:50%;
+    border:1px solid rgba(66,232,208,0.25);
+    animation:ring-pulse 2.6s ease-out infinite;
+  }
+  @keyframes ring-pulse{ 0%{ transform:scale(0.92); opacity:0.9; } 100%{ transform:scale(1.25); opacity:0; } }
+  .stamp-btn:hover{ transform:scale(1.05); background:var(--cyan); color:#05100d; box-shadow:0 0 40px -4px rgba(66,232,208,0.55); }
+
+  .depth-chip{ display:flex; align-items:center; gap:0.6rem; }
+  .depth-chip .dot{ width:7px; height:7px; border-radius:50%; flex:none; }
+
+  .status-badge{ font-family:'JetBrains Mono', monospace; font-size:0.78rem; font-weight:700; display:inline-flex; align-items:center; gap:6px; }
+  .status-badge .dot{ width:6px; height:6px; border-radius:50%; }
 </style>
 </head>
-<body>
+<body class="no-js-flat">
+
+<div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
 
 <svg class="grain" aria-hidden="true">
   <filter id="grainFilter">
@@ -169,16 +219,16 @@
 <div class="content">
 
   <!-- Nav -->
-  <nav class="fixed top-0 left-0 right-0 z-50 backdrop-blur bg-[#ece1c8]/90 border-b border-[rgba(33,26,19,0.16)]">
+  <nav class="fixed top-0 left-0 right-0 z-50 border-b" style="border-color:var(--line)">
     <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-      <a href="#top" class="display text-2xl">HH<span style="color:var(--rust)">.</span></a>
+      <a href="#top" class="display text-2xl">HH<span style="color:var(--amber)">.</span></a>
       <div class="hidden md:flex items-center gap-8">
         <a href="#keahlian" class="nav-link">01 · KATALOG</a>
         <a href="#proyek" class="nav-link">02 · LEMBAR KERJA</a>
         <a href="#stack" class="nav-link">03 · PERKAKAS</a>
         <a href="#kontak" class="nav-link">04 · PESAN</a>
       </div>
-      <button id="menu-btn" class="md:hidden mono text-sm border border-[var(--ink)] px-3 py-1.5" aria-expanded="false" aria-controls="mobile-menu">MENU</button>
+      <button id="menu-btn" class="md:hidden mono text-sm border px-3 py-1.5" style="border-color:var(--line-strong)" aria-expanded="false" aria-controls="mobile-menu">MENU</button>
     </div>
     <div id="mobile-menu" class="md:hidden flex flex-col gap-4">
       <a href="#keahlian" class="nav-link">01 · KATALOG</a>
@@ -188,38 +238,53 @@
     </div>
   </nav>
 
-  <!-- Hero: cover page of a service manual -->
-  <section id="top" class="min-h-screen flex items-center px-6 pt-28 pb-16">
-    <div class="max-w-6xl mx-auto w-full grid lg:grid-cols-[1fr_1fr] gap-14 items-center">
+  <!-- ================= HERO ================= -->
+  <section id="top" class="stage3d min-h-screen flex items-center px-6 pt-28 pb-16 relative overflow-hidden" data-parallax-root>
 
-      <div class="reveal">
-        <div class="rubber-stamp mb-8">BENGKEL &amp; STUDIO — SEJAK 2019</div>
+    <!-- signature: cursor-tracked flashlight over a hidden circuit grid -->
+    <div class="spotlight-field" id="spotlightField" aria-hidden="true"></div>
+    <div class="spotlight-glow" id="spotlightGlow" aria-hidden="true"></div>
 
-        <h1 class="stamp-text leading-[0.9] mb-2" style="font-size:clamp(3.2rem, 7vw, 6rem);">
-          <span class="ghost rust" aria-hidden="true">HANIF<br>HAIKAL</span>
-          <span class="ghost teal" aria-hidden="true">HANIF<br>HAIKAL</span>
-          <span class="relative">HANIF<br>HAIKAL</span>
+    <!-- ambient background glows -->
+    <div class="absolute -left-40 top-10 w-[520px] h-[520px] rounded-full pointer-events-none" style="background:radial-gradient(circle, rgba(255,157,61,0.10), transparent 65%)"></div>
+    <div class="absolute -right-40 bottom-0 w-[560px] h-[560px] rounded-full pointer-events-none" style="background:radial-gradient(circle, rgba(66,232,208,0.09), transparent 65%)"></div>
+
+    <div class="max-w-6xl mx-auto w-full grid lg:grid-cols-[1fr_1fr] gap-14 items-center relative">
+
+      <div class="reveal layer" data-depth="0.15">
+        <div class="status-pill mb-8"><span class="status-dot"></span>SISTEM AKTIF — SEJAK 2019</div>
+
+        <h1 class="stamp-text gradient-text leading-[0.92] mb-2" style="font-size:clamp(3rem, 6.6vw, 5.6rem); font-weight:900;">
+          HANIF<br>HAIKAL
         </h1>
 
-        <p class="text-lg md:text-xl mb-8 mt-6" style="color:var(--pencil)">
-          <span style="color:var(--rust); font-weight:600">Montir</span> ·
-          <span style="color:var(--ochre); font-weight:600">Desainer</span> ·
-          <span style="color:var(--teal); font-weight:600">Full Stack Developer</span>
+        <p class="text-lg md:text-xl mb-8 mt-6 flex items-center gap-3 flex-wrap" style="color:var(--ink-dim)">
+          <span class="mono" style="color:var(--ink-dim)">saat ini:</span>
+          <span id="roleReadout" class="mono" style="font-weight:700; color:var(--amber); min-width:1ch;">Montir</span>
+          <span class="mono" aria-hidden="true" style="color:var(--ink-dim)">▍</span>
         </p>
 
-        <p class="max-w-lg mb-10" style="color:var(--pencil)">
+        <p class="max-w-lg mb-8" style="color:var(--ink-dim)">
           Membongkar mesin di siang hari, menulis kode di malam hari. Presisi yang sama dipakai
-          untuk menyetel klep dan menyusun arsitektur aplikasi — dua bengkel, satu buku manual.
+          untuk menyetel klep dan menyusun arsitektur aplikasi — dua bengkel, satu panel kontrol.
         </p>
+
+        <div class="grid grid-cols-2 gap-x-6 gap-y-2 mb-10 max-w-sm">
+          <div class="depth-chip"><span class="dot" style="background:var(--ink-dim)"></span><span class="tag" style="color:var(--ink-dim)">01 GRID</span></div>
+          <div class="depth-chip"><span class="dot" style="background:var(--ink-dim); opacity:0.5"></span><span class="tag" style="color:var(--ink-dim)">02 SIRKUIT</span></div>
+          <div class="depth-chip"><span class="dot" style="background:var(--amber)"></span><span class="tag" style="color:var(--ink-dim)">03 PANDUAN</span></div>
+          <div class="depth-chip"><span class="dot" style="background:var(--magenta)"></span><span class="tag" style="color:var(--ink-dim)">04 KOMPONEN</span></div>
+          <div class="depth-chip"><span class="dot" style="background:var(--cyan)"></span><span class="tag" style="color:var(--ink-dim)">05 PARTIKEL</span></div>
+          <div class="depth-chip"><span class="tag" style="color:var(--ink-dim)">→ gerakkan kursor</span></div>
+        </div>
 
         <div class="flex flex-wrap gap-4 mb-14">
           <a href="#proyek" class="btn-primary">LIHAT LEMBAR KERJA →</a>
           <a href="#kontak" class="btn-outline">HUBUNGI SAYA</a>
         </div>
 
-        <!-- Odometer signature -->
         <div class="card p-5 inline-block">
-          <div class="kicker mb-3" style="color:var(--pencil)">JAM TERBANG TERCATAT</div>
+          <div class="kicker mb-3" style="color:var(--ink-dim)">JAM TERBANG TERCATAT</div>
           <div class="flex items-end gap-4 flex-wrap">
             <div class="odometer" id="odometer" aria-hidden="true">
               <div class="digit-box"><div class="digit-strip" data-target="1">
@@ -240,50 +305,55 @@
             </div>
             <button id="odo-btn" type="button">PUTAR</button>
           </div>
-          <p class="tag mt-3" style="color:var(--pencil)">JAM · KLIK UNTUK MEMBACA ULANG</p>
+          <p class="tag mt-3" style="color:var(--ink-dim)">JAM · KLIK UNTUK MEMBACA ULANG</p>
         </div>
       </div>
 
-      <!-- Exploded parts diagram -->
-      <div class="reveal" style="transition-delay:0.1s">
-        <svg viewBox="0 0 560 460" class="w-full h-auto" role="img" aria-label="Diagram bongkar tiga keahlian: montir, desainer, developer">
-          <g fill="none" stroke="var(--ink)" stroke-width="1.4" opacity="0.85">
+      <!-- Exploded 5-layer diagram, recolored -->
+      <div class="reveal relative" style="transition-delay:0.1s; height:460px;">
+
+        <svg class="layer absolute inset-0" data-depth="0.28" viewBox="0 0 560 460" aria-hidden="true">
+          <g fill="none" stroke="var(--ink-dim)" stroke-width="1.2" opacity="0.7">
             <circle cx="280" cy="250" r="52"/>
-            <circle cx="280" cy="250" r="8" fill="var(--ink)"/>
+            <circle cx="280" cy="250" r="8" fill="var(--ink-dim)"/>
             <line x1="280" y1="198" x2="280" y2="150" stroke-dasharray="4 4"/>
             <line x1="325" y1="222" x2="452" y2="150" stroke-dasharray="4 4"/>
             <line x1="235" y1="222" x2="108" y2="150" stroke-dasharray="4 4"/>
             <line x1="280" y1="302" x2="280" y2="392" stroke-dasharray="4 4"/>
           </g>
           <text x="280" y="256" text-anchor="middle" class="mono" font-size="13" fill="var(--ink)">HH</text>
+        </svg>
 
-          <!-- Wrench — Montir -->
-          <g transform="translate(60,90)" stroke="var(--rust)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <svg class="layer absolute" data-depth="0.5" style="left:60px; top:90px; filter:drop-shadow(0 0 10px rgba(255,157,61,0.5));" width="70" height="70" viewBox="0 0 70 70" aria-hidden="true">
+          <g stroke="var(--amber)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
             <path d="M32 4c8 0 14 6 14 14 0 4-1 7-4 10l16 16-8 8-16-16c-3 3-6 4-10 4-8 0-14-6-14-14S24 4 32 4z"/>
             <circle cx="32" cy="18" r="6"/>
           </g>
-          <text x="58" y="80" class="mono" font-size="12" fill="var(--rust)">01 — MONTIR</text>
+        </svg>
+        <div class="layer absolute mono text-xs" data-depth="0.5" style="left:58px; top:76px; color:var(--amber)">01 — MONTIR</div>
 
-          <!-- Roller — Desainer -->
-          <g transform="translate(410,86)" stroke="var(--ochre)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <svg class="layer absolute" data-depth="0.7" style="left:410px; top:86px; filter:drop-shadow(0 0 10px rgba(239,93,168,0.5));" width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
+          <g stroke="var(--magenta)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
             <rect x="0" y="0" width="42" height="18" rx="3"/>
             <line x1="21" y1="18" x2="21" y2="34"/>
             <line x1="12" y1="34" x2="30" y2="34"/>
             <line x1="21" y1="34" x2="21" y2="52"/>
           </g>
-          <text x="404" y="76" class="mono" font-size="12" fill="var(--ochre)">02 — DESAINER</text>
+        </svg>
+        <div class="layer absolute mono text-xs" data-depth="0.7" style="left:404px; top:72px; color:var(--magenta)">02 — DESAINER</div>
 
-          <!-- Code bracket — Developer -->
-          <g transform="translate(238,394)" stroke="var(--teal)" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <svg class="layer absolute" data-depth="0.95" style="left:238px; top:394px; filter:drop-shadow(0 0 10px rgba(66,232,208,0.5));" width="82" height="48" viewBox="0 0 82 48" aria-hidden="true">
+          <g stroke="var(--cyan)" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round">
             <path d="M16 0 2 24l14 24"/>
             <path d="M68 0l14 24-14 24"/>
           </g>
-          <text x="222" y="446" class="mono" font-size="12" fill="var(--teal)">03 — DEVELOPER</text>
+        </svg>
+        <div class="layer absolute mono text-xs" data-depth="0.95" style="left:222px; top:444px; color:var(--cyan)">03 — DEVELOPER</div>
 
-          <!-- scattered bolts for texture -->
-          <g fill="none" stroke="var(--pencil)" stroke-width="1.2" opacity="0.55">
+        <svg class="layer absolute inset-0" data-depth="1.1" viewBox="0 0 560 460" aria-hidden="true">
+          <g fill="none" stroke="var(--ink-dim)" stroke-width="1.1" opacity="0.5">
             <polygon points="470,260 478,265 478,275 470,280 462,275 462,265"/>
-            <polygon points="90,300 98,305 98,315 90,320 82,315 82,265" transform="translate(0,0)"/>
+            <polygon points="90,300 98,305 98,315 90,320 82,315 82,265"/>
             <circle cx="500" cy="330" r="5"/>
           </g>
         </svg>
@@ -291,29 +361,28 @@
     </div>
   </section>
 
-  <svg class="torn" viewBox="0 0 1200 26" preserveAspectRatio="none" aria-hidden="true"><path d="M0,13 L20,4 L40,18 L60,6 L80,16 L100,2 L120,20 L140,8 L160,14 L180,4 L200,18 L220,6 L240,16 L260,2 L280,20 L300,8 L320,14 L340,4 L360,18 L380,6 L400,16 L420,2 L440,20 L460,8 L480,14 L500,4 L520,18 L540,6 L560,16 L580,2 L600,20 L620,8 L640,14 L660,4 L680,18 L700,6 L720,16 L740,2 L760,20 L780,8 L800,14 L820,4 L840,18 L860,6 L880,16 L900,2 L920,20 L940,8 L960,14 L980,4 L1000,18 L1020,6 L1040,16 L1060,2 L1080,20 L1100,8 L1120,14 L1140,4 L1160,18 L1180,6 L1200,13 L1200,26 L0,26 Z" fill="var(--paper-2)"/></svg>
+  <div class="max-w-6xl mx-auto px-6"><div class="divider-glow"></div></div>
 
-  <!-- Skills as a parts catalog -->
-  <section id="keahlian" class="py-24 px-6" style="background:var(--paper-2)">
+  <!-- Skills as diagnostic panels -->
+  <section id="keahlian" class="py-24 px-6">
     <div class="max-w-6xl mx-auto">
       <div class="flex items-end justify-between mb-14 reveal">
         <div>
-          <div class="kicker mb-3" style="color:var(--pencil)">01 · KATALOG</div>
+          <div class="kicker mb-3" style="color:var(--ink-dim)">01 · KATALOG</div>
           <h2 class="display text-5xl md:text-6xl">SUKU CADANG KEAHLIAN</h2>
         </div>
-        <span class="tag hidden md:block" style="color:var(--pencil)">TIGA BIDANG, SATU PRESISI</span>
+        <span class="tag hidden md:block" style="color:var(--ink-dim)">ARAHKAN KURSOR — TIGA BIDANG, SATU PRESISI</span>
       </div>
 
-      <div class="grid md:grid-cols-3 gap-8 pt-4">
+      <div class="grid md:grid-cols-3 gap-6 pt-4">
 
-        <div class="card relative p-8 reveal tilt-settle" style="transform:rotate(-1.2deg)">
-          <div class="tape"></div>
+        <div class="card card-glow-amber tilt-3d relative p-8 reveal">
           <div class="flex items-start justify-between mb-6">
-            <div class="mono text-sm" style="color:var(--rust)">PART NO. MEK-01</div>
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--rust)" stroke-width="1.6"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2-2z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="mono text-sm" style="color:var(--amber)">PART NO. MEK-01</div>
+            <svg class="tilt-pop" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="1.6"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2-2z" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
           <h3 class="display text-3xl mb-5">MONTIR</h3>
-          <ul class="space-y-2 text-sm" style="color:var(--pencil)">
+          <ul class="space-y-2 text-sm" style="color:var(--ink-dim)">
             <li>Overhaul & perbaikan mesin</li>
             <li>Servis transmisi</li>
             <li>Diagnostik elektronik kendaraan</li>
@@ -321,14 +390,13 @@
           </ul>
         </div>
 
-        <div class="card relative p-8 reveal tilt-settle md:mt-10" style="transform:rotate(1deg); transition-delay:0.1s">
-          <div class="tape"></div>
+        <div class="card card-glow-magenta tilt-3d relative p-8 reveal" style="transition-delay:0.1s">
           <div class="flex items-start justify-between mb-6">
-            <div class="mono text-sm" style="color:var(--ochre)">PART NO. DES-02</div>
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--ochre)" stroke-width="1.6"><rect x="3" y="3" width="10" height="6" rx="1" stroke-linejoin="round"/><path d="M6 9v4a2 2 0 0 0 2 2h1v4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="20.5" r="1.4"/></svg>
+            <div class="mono text-sm" style="color:var(--magenta)">PART NO. DES-02</div>
+            <svg class="tilt-pop" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--magenta)" stroke-width="1.6"><rect x="3" y="3" width="10" height="6" rx="1" stroke-linejoin="round"/><path d="M6 9v4a2 2 0 0 0 2 2h1v4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="20.5" r="1.4"/></svg>
           </div>
           <h3 class="display text-3xl mb-5">DESAINER</h3>
-          <ul class="space-y-2 text-sm" style="color:var(--pencil)">
+          <ul class="space-y-2 text-sm" style="color:var(--ink-dim)">
             <li>Pengecatan bodi otomotif</li>
             <li>Teori dan pemetaan warna</li>
             <li>Desain custom & livery</li>
@@ -336,14 +404,13 @@
           </ul>
         </div>
 
-        <div class="card relative p-8 reveal tilt-settle md:-mt-4" style="transform:rotate(-0.8deg); transition-delay:0.2s">
-          <div class="tape"></div>
+        <div class="card card-glow-cyan tilt-3d relative p-8 reveal" style="transition-delay:0.2s">
           <div class="flex items-start justify-between mb-6">
-            <div class="mono text-sm" style="color:var(--teal)">PART NO. DEV-03</div>
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="1.6"><path d="M8 4 3 12l5 8M16 4l5 8-5 8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="mono text-sm" style="color:var(--cyan)">PART NO. DEV-03</div>
+            <svg class="tilt-pop" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="1.6"><path d="M8 4 3 12l5 8M16 4l5 8-5 8" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
           <h3 class="display text-3xl mb-5">DEVELOPER</h3>
-          <ul class="space-y-2 text-sm" style="color:var(--pencil)">
+          <ul class="space-y-2 text-sm" style="color:var(--ink-dim)">
             <li>React & Next.js</li>
             <li>Node.js backend</li>
             <li>Full stack web apps</li>
@@ -355,88 +422,70 @@
     </div>
   </section>
 
-  <svg class="torn" viewBox="0 0 1200 26" preserveAspectRatio="none" aria-hidden="true" style="transform:rotate(180deg)"><path d="M0,13 L20,4 L40,18 L60,6 L80,16 L100,2 L120,20 L140,8 L160,14 L180,4 L200,18 L220,6 L240,16 L260,2 L280,20 L300,8 L320,14 L340,4 L360,18 L380,6 L400,16 L420,2 L440,20 L460,8 L480,14 L500,4 L520,18 L540,6 L560,16 L580,2 L600,20 L620,8 L640,14 L660,4 L680,18 L700,6 L720,16 L740,2 L760,20 L780,8 L800,14 L820,4 L840,18 L860,6 L880,16 L900,2 L920,20 L940,8 L960,14 L980,4 L1000,18 L1020,6 L1040,16 L1060,2 L1080,20 L1100,8 L1120,14 L1140,4 L1160,18 L1180,6 L1200,13 L1200,26 L0,26 Z" fill="var(--paper)"/></svg>
+  <div class="max-w-6xl mx-auto px-6"><div class="divider-glow"></div></div>
 
-  <!-- Projects as carbon-copy work orders -->
+  <!-- Work orders as clean readout rows -->
   <section id="proyek" class="py-24 px-6">
     <div class="max-w-6xl mx-auto">
       <div class="mb-14 reveal">
-        <div class="kicker mb-3" style="color:var(--pencil)">02 · LEMBAR KERJA</div>
+        <div class="kicker mb-3" style="color:var(--ink-dim)">02 · LEMBAR KERJA</div>
         <h2 class="display text-5xl md:text-6xl">SURAT PERINTAH KERJA</h2>
       </div>
 
-      <div class="space-y-10">
+      <div class="space-y-6">
 
-        <article class="card p-0 reveal tilt-settle md:mr-14" style="transform:rotate(0.6deg)">
-          <div class="perf pt-3 pb-1"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-          <div class="p-8 md:p-10">
-            <div class="grid md:grid-cols-[1fr_auto] gap-8 items-start mb-6">
-              <div>
-                <div class="tag mb-3" style="color:var(--pencil)">WO #M-0117 · OTOMOTIF</div>
-                <h3 class="display text-3xl md:text-4xl mb-4">Restorasi Mesin Klasik</h3>
-                <p style="color:var(--pencil)">
-                  Overhaul menyeluruh sebuah mesin lawas, dipadukan dengan alat diagnostik modern
-                  untuk mengembalikan performa mendekati spesifikasi pabrik.
-                </p>
-              </div>
-              <div class="mono text-sm text-right" style="color:var(--pencil)">
-                <div>STATUS</div>
-                <div style="color:var(--rust); font-weight:700">SELESAI</div>
-              </div>
+        <article class="card card-glow-amber tilt-3d p-8 md:p-10 reveal">
+          <div class="grid md:grid-cols-[1fr_auto] gap-8 items-start mb-6">
+            <div>
+              <div class="tag mb-3" style="color:var(--ink-dim)">WO #M-0117 · OTOMOTIF</div>
+              <h3 class="display text-3xl md:text-4xl mb-4">Restorasi Mesin Klasik</h3>
+              <p style="color:var(--ink-dim)">
+                Overhaul menyeluruh sebuah mesin lawas, dipadukan dengan alat diagnostik modern
+                untuk mengembalikan performa mendekati spesifikasi pabrik.
+              </p>
             </div>
-            <div class="flex flex-wrap gap-2">
-              <span class="tag px-3 py-1 border" style="border-color:var(--paper-line)">OTOMOTIF</span>
-              <span class="tag px-3 py-1 border" style="border-color:var(--paper-line)">RESTORASI</span>
-            </div>
+            <div class="status-badge" style="color:var(--amber)"><span class="dot" style="background:var(--amber); box-shadow:0 0 6px var(--amber)"></span>SELESAI</div>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <span class="tag px-3 py-1 border rounded-full" style="border-color:var(--line-strong); color:var(--ink-dim)">OTOMOTIF</span>
+            <span class="tag px-3 py-1 border rounded-full" style="border-color:var(--line-strong); color:var(--ink-dim)">RESTORASI</span>
           </div>
         </article>
 
-        <article class="card p-0 reveal tilt-settle md:ml-14" style="transform:rotate(-0.6deg); transition-delay:0.1s">
-          <div class="perf pt-3 pb-1"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-          <div class="p-8 md:p-10">
-            <div class="grid md:grid-cols-[1fr_auto] gap-8 items-start mb-6">
-              <div>
-                <div class="tag mb-3" style="color:var(--pencil)">WO #D-0229 · PERANGKAT LUNAK</div>
-                <h3 class="display text-3xl md:text-4xl mb-4">Sistem Manajemen Inventaris Bengkel</h3>
-                <p style="color:var(--pencil)">
-                  Pelacakan stok suku cadang secara real-time untuk bengkel, dibangun dengan React,
-                  Node.js, dan MongoDB — dirancang langsung dari alur kerja bengkel sehari-hari.
-                </p>
-              </div>
-              <div class="mono text-sm text-right" style="color:var(--pencil)">
-                <div>STATUS</div>
-                <div style="color:var(--teal); font-weight:700">LIVE</div>
-              </div>
+        <article class="card card-glow-cyan tilt-3d p-8 md:p-10 reveal" style="transition-delay:0.1s">
+          <div class="grid md:grid-cols-[1fr_auto] gap-8 items-start mb-6">
+            <div>
+              <div class="tag mb-3" style="color:var(--ink-dim)">WO #D-0229 · PERANGKAT LUNAK</div>
+              <h3 class="display text-3xl md:text-4xl mb-4">Sistem Manajemen Inventaris Bengkel</h3>
+              <p style="color:var(--ink-dim)">
+                Pelacakan stok suku cadang secara real-time untuk bengkel, dibangun dengan React,
+                Node.js, dan MongoDB — dirancang langsung dari alur kerja bengkel sehari-hari.
+              </p>
             </div>
-            <div class="flex flex-wrap gap-2">
-              <span class="tag px-3 py-1 border" style="border-color:var(--paper-line)">REACT</span>
-              <span class="tag px-3 py-1 border" style="border-color:var(--paper-line)">NODE.JS</span>
-              <span class="tag px-3 py-1 border" style="border-color:var(--paper-line)">MONGODB</span>
-            </div>
+            <div class="status-badge" style="color:var(--cyan)"><span class="dot" style="background:var(--cyan); box-shadow:0 0 6px var(--cyan)"></span>LIVE</div>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <span class="tag px-3 py-1 border rounded-full" style="border-color:var(--line-strong); color:var(--ink-dim)">REACT</span>
+            <span class="tag px-3 py-1 border rounded-full" style="border-color:var(--line-strong); color:var(--ink-dim)">NODE.JS</span>
+            <span class="tag px-3 py-1 border rounded-full" style="border-color:var(--line-strong); color:var(--ink-dim)">MONGODB</span>
           </div>
         </article>
 
-        <article class="card p-0 reveal tilt-settle md:mr-20" style="transform:rotate(0.8deg); transition-delay:0.2s">
-          <div class="perf pt-3 pb-1"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-          <div class="p-8 md:p-10">
-            <div class="grid md:grid-cols-[1fr_auto] gap-8 items-start mb-6">
-              <div>
-                <div class="tag mb-3" style="color:var(--pencil)">WO #G-0304 · GABUNGAN</div>
-                <h3 class="display text-3xl md:text-4xl mb-4">Konfigurator Livery Kendaraan</h3>
-                <p style="color:var(--pencil)">
-                  Aplikasi web untuk mencoba kombinasi warna dan livery sebelum pengecatan dilakukan
-                  di bengkel — menghubungkan pengalaman desain otomotif dengan antarmuka digital.
-                </p>
-              </div>
-              <div class="mono text-sm text-right" style="color:var(--pencil)">
-                <div>STATUS</div>
-                <div style="color:var(--ochre); font-weight:700">DALAM PROSES</div>
-              </div>
+        <article class="card card-glow-magenta tilt-3d p-8 md:p-10 reveal" style="transition-delay:0.2s">
+          <div class="grid md:grid-cols-[1fr_auto] gap-8 items-start mb-6">
+            <div>
+              <div class="tag mb-3" style="color:var(--ink-dim)">WO #G-0304 · GABUNGAN</div>
+              <h3 class="display text-3xl md:text-4xl mb-4">Konfigurator Livery Kendaraan</h3>
+              <p style="color:var(--ink-dim)">
+                Aplikasi web untuk mencoba kombinasi warna dan livery sebelum pengecatan dilakukan
+                di bengkel — menghubungkan pengalaman desain otomotif dengan antarmuka digital.
+              </p>
             </div>
-            <div class="flex flex-wrap gap-2">
-              <span class="tag px-3 py-1 border" style="border-color:var(--paper-line)">THREE.JS</span>
-              <span class="tag px-3 py-1 border" style="border-color:var(--paper-line)">TYPESCRIPT</span>
-            </div>
+            <div class="status-badge" style="color:var(--magenta)"><span class="dot" style="background:var(--magenta); box-shadow:0 0 6px var(--magenta)"></span>DALAM PROSES</div>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <span class="tag px-3 py-1 border rounded-full" style="border-color:var(--line-strong); color:var(--ink-dim)">THREE.JS</span>
+            <span class="tag px-3 py-1 border rounded-full" style="border-color:var(--line-strong); color:var(--ink-dim)">TYPESCRIPT</span>
           </div>
         </article>
 
@@ -444,43 +493,42 @@
     </div>
   </section>
 
-  <!-- Toolbox as a pegboard -->
-  <section id="stack" class="py-24 px-6" style="background:var(--paper-2)">
-    <div class="max-w-6xl mx-auto">
+  <!-- Toolbox pegboard -->
+  <section id="stack" class="stage3d py-24 px-6 relative" data-parallax-root>
+    <div class="max-w-6xl mx-auto relative">
       <div class="mb-16 reveal">
-        <div class="kicker mb-3" style="color:var(--pencil)">03 · PERKAKAS</div>
+        <div class="kicker mb-3" style="color:var(--ink-dim)">03 · PERKAKAS</div>
         <h2 class="display text-5xl md:text-6xl">PAPAN PERKAKAS</h2>
       </div>
 
       <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-        <div class="reveal" style="margin-top:0px">
+        <div class="reveal layer" data-depth="0.35">
           <div class="peg-circle"></div><div class="peg-hook"></div>
-          <div class="card p-6 text-center"><div class="mono text-2xl mb-2">⚛</div><div class="mono text-sm">REACT</div></div>
+          <div class="card p-6 text-center"><div class="mono text-2xl mb-2" style="color:var(--cyan)">⚛</div><div class="mono text-sm">REACT</div></div>
         </div>
-        <div class="reveal" style="margin-top:22px; transition-delay:0.05s">
+        <div class="reveal layer" data-depth="0.55" style="margin-top:18px; transition-delay:0.05s">
           <div class="peg-circle"></div><div class="peg-hook"></div>
-          <div class="card p-6 text-center"><div class="mono text-2xl mb-2">▸_</div><div class="mono text-sm">NODE.JS</div></div>
+          <div class="card p-6 text-center"><div class="mono text-2xl mb-2" style="color:var(--amber)">▸_</div><div class="mono text-sm">NODE.JS</div></div>
         </div>
-        <div class="reveal" style="margin-top:6px; transition-delay:0.1s">
+        <div class="reveal layer" data-depth="0.75" style="margin-top:4px; transition-delay:0.1s">
           <div class="peg-circle"></div><div class="peg-hook"></div>
-          <div class="card p-6 text-center"><div class="mono text-2xl mb-2">TS</div><div class="mono text-sm">TYPESCRIPT</div></div>
+          <div class="card p-6 text-center"><div class="mono text-2xl mb-2" style="color:var(--magenta)">TS</div><div class="mono text-sm">TYPESCRIPT</div></div>
         </div>
-        <div class="reveal" style="margin-top:30px; transition-delay:0.15s">
+        <div class="reveal layer" data-depth="0.95" style="margin-top:24px; transition-delay:0.15s">
           <div class="peg-circle"></div><div class="peg-hook"></div>
-          <div class="card p-6 text-center"><div class="mono text-2xl mb-2">▤</div><div class="mono text-sm">MONGODB</div></div>
+          <div class="card p-6 text-center"><div class="mono text-2xl mb-2" style="color:var(--cyan)">▤</div><div class="mono text-sm">MONGODB</div></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Contact as an order slip -->
+  <!-- Contact -->
   <section id="kontak" class="py-24 px-6">
-    <div class="max-w-3xl mx-auto card p-0 reveal">
-      <div class="perf pt-4 pb-1 px-2"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="max-w-3xl mx-auto card reveal">
       <div class="p-10 md:p-16 text-center">
-        <div class="kicker mb-4" style="color:var(--pencil)">04 · SURAT PESANAN</div>
+        <div class="kicker mb-4" style="color:var(--ink-dim)">04 · SURAT PESANAN</div>
         <h2 class="display text-5xl md:text-6xl mb-6">MARI KERJAKAN SESUATU</h2>
-        <p class="max-w-xl mx-auto mb-10" style="color:var(--pencil)">
+        <p class="max-w-xl mx-auto mb-10" style="color:var(--ink-dim)">
           Butuh bantuan untuk mesin, tampilan, atau aplikasi? Ceritakan proyeknya, dan saya akan
           balas dengan perkiraan waktu pengerjaan.
         </p>
@@ -490,17 +538,20 @@
     </div>
   </section>
 
-  <footer class="py-10 px-6 border-t" style="border-color:var(--paper-line)">
-    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 mono text-xs" style="color:var(--pencil)">
+  <footer class="py-10 px-6 border-t" style="border-color:var(--line)">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 mono text-xs" style="color:var(--ink-dim)">
       <span>© 2026 HANIF HAIKAL</span>
-      <span>MONTIR · DESAINER · DEVELOPER</span>
+      <span>MONTIR · DESAINER · DEVELOPER — LIMA LAPISAN KEDALAMAN</span>
     </div>
   </footer>
 
 </div>
 
 <script>
-  // Mobile menu
+  document.body.classList.remove('no-js-flat');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
+
   const menuBtn = document.getElementById('menu-btn');
   const mobileMenu = document.getElementById('mobile-menu');
   menuBtn.addEventListener('click', () => {
@@ -512,19 +563,122 @@
     menuBtn.setAttribute('aria-expanded', 'false');
   }));
 
-  // Scroll reveal
   const reveals = document.querySelectorAll('.reveal');
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
   }, { threshold: 0.12 });
   reveals.forEach(el => observer.observe(el));
 
-  // Mechanical odometer
+  // Depth-layer parallax
+  if (!reduceMotion && !isCoarsePointer) {
+    document.querySelectorAll('[data-parallax-root]').forEach(root => {
+      const layers = root.querySelectorAll('.layer');
+      let raf = null, targetX = 0, targetY = 0;
+
+      root.addEventListener('mousemove', (e) => {
+        const rect = root.getBoundingClientRect();
+        targetX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+        targetY = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+        if (!raf) raf = requestAnimationFrame(apply);
+      });
+      root.addEventListener('mouseleave', () => {
+        targetX = 0; targetY = 0;
+        if (!raf) raf = requestAnimationFrame(apply);
+      });
+
+      function apply(){
+        layers.forEach(layer => {
+          const depth = parseFloat(layer.dataset.depth || '0');
+          const maxShift = 24;
+          const x = targetX * maxShift * depth;
+          const y = targetY * maxShift * depth;
+          layer.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
+        });
+        raf = null;
+      }
+    });
+  }
+
+  // Spotlight signature (flashlight over circuit grid)
+  if (!isCoarsePointer) {
+    const heroStage = document.querySelector('#top[data-parallax-root]');
+    if (heroStage) {
+      heroStage.addEventListener('mousemove', (e) => {
+        const rect = heroStage.getBoundingClientRect();
+        const mx = ((e.clientX - rect.left) / rect.width) * 100;
+        const my = ((e.clientY - rect.top) / rect.height) * 100;
+        heroStage.style.setProperty('--mx', mx + '%');
+        heroStage.style.setProperty('--my', my + '%');
+      });
+    }
+  }
+
+  // 3D tilt cards
+  if (!isCoarsePointer) {
+    document.querySelectorAll('.tilt-3d').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        if (reduceMotion) return;
+        const rect = card.getBoundingClientRect();
+        const px = (e.clientX - rect.left) / rect.width - 0.5;
+        const py = (e.clientY - rect.top) / rect.height - 0.5;
+        card.style.setProperty('--ry', (px * 8).toFixed(2) + 'deg');
+        card.style.setProperty('--rx', (py * -8).toFixed(2) + 'deg');
+        card.style.setProperty('--tz', '4px');
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.setProperty('--ry', '0deg');
+        card.style.setProperty('--rx', '0deg');
+        card.style.setProperty('--tz', '0px');
+      });
+    });
+  }
+
+  // Cycling role readout — typewriter through the three identities
+  (function(){
+    const el = document.getElementById('roleReadout');
+    if (!el) return;
+    const roles = [
+      { text:'Montir', color:'var(--amber)' },
+      { text:'Desainer', color:'var(--magenta)' },
+      { text:'Full Stack Developer', color:'var(--cyan)' }
+    ];
+    if (reduceMotion) { el.textContent = 'Montir · Desainer · Full Stack Developer'; return; }
+    let ri = 0;
+    function typeRole(){
+      const role = roles[ri];
+      el.style.color = role.color;
+      let ci = 0;
+      el.textContent = '';
+      const typeInt = setInterval(() => {
+        ci++;
+        el.textContent = role.text.slice(0, ci);
+        if (ci >= role.text.length) {
+          clearInterval(typeInt);
+          setTimeout(eraseRole, 1400);
+        }
+      }, 55);
+    }
+    function eraseRole(){
+      const role = roles[ri];
+      let ci = role.text.length;
+      const eraseInt = setInterval(() => {
+        ci--;
+        el.textContent = role.text.slice(0, ci);
+        if (ci <= 0) {
+          clearInterval(eraseInt);
+          ri = (ri + 1) % roles.length;
+          setTimeout(typeRole, 200);
+        }
+      }, 30);
+    }
+    typeRole();
+  })();
+
+  // Odometer
   (function(){
     const btn = document.getElementById('odo-btn');
     const strips = document.querySelectorAll('.digit-strip');
     if (!btn || !strips.length) return;
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let revealed = false;
 
     function tickSound(){
@@ -545,10 +699,10 @@
     function roll(){
       strips.forEach((strip, i) => {
         const target = revealed ? 0 : parseInt(strip.dataset.target, 10);
-        const delay = reduce ? 0 : i * 130;
+        const delay = reduceMotion ? 0 : i * 130;
         setTimeout(() => {
-          strip.style.transform = `translateY(-${target * 52}px)`;
-          if (!reduce) tickSound();
+          strip.style.transform = `translateY(-${target * 50}px)`;
+          if (!reduceMotion) tickSound();
         }, delay);
       });
       revealed = !revealed;
