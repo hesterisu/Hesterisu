@@ -22,5 +22,4 @@ Mahasiswa **Sistem Informasi** yang berfokus pada menjembatani proses bisnis den
 ---
 
 ### 📫 Mari Terhubung!
-* **LinkedIn:** [Masukkan Link Profil LinkedIn Kamu]
-* **Email:** [Masukkan Alamat Email Kamu]
+* **Email:** hesterisu@gmail.com
